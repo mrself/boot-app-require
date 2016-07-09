@@ -2,6 +2,7 @@ var fakeDir = './fake';
 var fake = require('./fake');
 
 var ModuleResolver = require('../src/index');
+var Namespace = ModuleResolver.Namespace;
 
 var chai = require('chai');
 var assert = chai.assert;
@@ -22,7 +23,7 @@ describe('#resolveModule', function() {
 	it ('resolve module with one parent', function(done) {
 		var self = this;
 		fake.create(['services/db.js']).then(function() {
-			self.resolver.resolveModule(['services'], 'db');
+			self.resolver.resolveModule(Namespace.make(['services']), 'db');
 			assert(self.resolver.result['services/db']);
 			done();
 		});
@@ -32,7 +33,7 @@ describe('#resolveModule', function() {
 	it('resolve module with several parents', function(done) {
 		var self = this;
 		fake.create(['services/custom/mod1.js']).then(function() {
-			self.resolver.resolveModule(['services', 'custom'], 'mod1');
+			self.resolver.resolveModule(Namespace.make(['services', 'custom']), 'mod1');
 			assert(self.resolver.result['services/custom/mod1']);
 			done();
 		});
@@ -44,7 +45,7 @@ describe('#resolveList', function() {
 	it('resolve list of modules', function(done) {
 		var self = this;
 		fake.create(['db.js', 'routes.js']).then(function() {
-			self.resolver.resolveList([], ['db', 'routes']);
+			self.resolver.resolveList(Namespace.make(), ['db', 'routes']);
 			assert(self.resolver.result['db']);
 			assert(self.resolver.result['routes']);
 			done();
@@ -53,7 +54,7 @@ describe('#resolveList', function() {
 	it('resolve list with a namespace', function(done) {
 		var self = this;
 		fake.create(['services/custom/mod1.js']).then(function() {
-			self.resolver.resolveList(['services', 'custom'], ['mod1']);
+			self.resolver.resolveList(Namespace.make(['services', 'custom']), ['mod1']);
 			assert(self.resolver.result['services/custom/mod1']);
 			done();
 		});

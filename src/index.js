@@ -1,5 +1,5 @@
 var Path = require('path');
-var Namespace = require('./namespace');
+var Namespace = ModuleResolver.Namespace = require('./namespace');
 
 function ModuleResolver () {
 	this.result = {};
@@ -10,11 +10,11 @@ function ModuleResolver () {
 ModuleResolver.prototype = {
 	constructor: ModuleResolver,
 
-	resolve: function(modules, namespace) {
-		namespace = namespace || [];
-		for (var moduleName in modules) {
-			namespace.push(moduleName);
-			var module = modules[moduleName];
+	resolve: function(modules, namespaceList) {
+		namespace = Namespace.make(namespaceList);
+		for (var name in modules) {
+			namespace.add(name);
+			var module = modules[name];
 			if (Array.isArray(module)) {
 				this.resolveList(namespace, module);
 			} else {
@@ -30,20 +30,29 @@ ModuleResolver.prototype = {
 	},
 
 	makePath: function(parentNamespace, item) {
-		return Path.join(this.root, this.directory, parentNamespace.join('/'), item + '.js');
+		return Path.join(this.root, this.directory, parentNamespace.toString(), item + '.js');
 	},
 
 	resolveModule: function(parentNamespace, name) {
 		var path = this.makePath(parentNamespace, name);
-		var fullNamespace = parentNamespace.slice(0);
-		fullNamespace.push(name);
+		var fullNamespace = Namespace.clone(parentNamespace);
+		fullNamespace.add(name);
 		this.addModule(fullNamespace, path);
 	},
 
+	/**
+	 * Add a module
+	 * @param {Namespace} namespace
+	 * @param {string} path
+	 */
 	addModule: function(namespace, path) {
-		this.result[namespace.join('/')] = require(path);
+		this.result[namespace.toString()] = require(path);
 	},
 
+	/**
+	 * Set directory
+	 * @param {string} directory
+	 */
 	setDirectory: function(directory) {
 		this.directory = directory;
 	},
