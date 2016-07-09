@@ -10,15 +10,16 @@ function ModuleResolver () {
 ModuleResolver.prototype = {
 	constructor: ModuleResolver,
 
-	resolve: function(modules, namespaceList) {
-		namespace = Namespace.make(namespaceList);
+	resolve: function(modules, namespace) {
+		namespace = namespace || Namespace.make();
 		for (var name in modules) {
-			namespace.add(name);
+			var nsDubl = Namespace.clone(namespace);
+			nsDubl.add(name);
 			var module = modules[name];
 			if (Array.isArray(module)) {
-				this.resolveList(namespace, module);
+				this.resolveList(nsDubl, module);
 			} else {
-				this.resolve(namespace, module);
+				this.resolve(module, nsDubl);
 			}
 		}
 	},
