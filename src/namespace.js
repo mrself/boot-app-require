@@ -42,7 +42,7 @@ Namespace.prototype = {
 /**
  * Make an instance
  * @param  {array=} names
- * @return {[type]}       [description]
+ * @return {Namespace}
  */
 Namespace.make = function(names) {
 	var inst = new this;
