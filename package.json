@@ -1,5 +1,5 @@
 {
-  "name": "module-resolver",
+  "name": "boot-app-require",
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.js",
